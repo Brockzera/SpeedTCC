@@ -6,6 +6,7 @@ import numpy as np
 import os
 import cv2
 import tccfunctions as t
+import show_infos as s
 import datetime
 from shutil import copy2
 #import math
@@ -15,10 +16,10 @@ VIDEO_FILE = './Dataset/video{}.mp4'.format(VIDEO)
 XML_FILE = './Dataset/video{}.xml'.format(VIDEO)
 
 RESIZE_RATIO = 0.35 #0.7697  # Resize, valores entre 0 e 1 | 1= ize original do video
-CLOSE_VIDEO = 5934 #5934  # 1-6917 # 5-36253
+CLOSE_VIDEO = 500 #5934  # 1-6917 # 5-36253
 ARTG_FRAME = 0  # 254  # Frame q usei para exemplo no Artigo
 
-SHOW_ROI = True
+SHOW_ROI = False
 SHOW_TRACKING_AREA = True
 SHOW_TRAIL = True
 SHOW_LINEAR_REGRESSION = True
@@ -38,12 +39,12 @@ MIN_AREA_FOR_DETEC = 30000  # Default 40000 (não detecta Moto)
 # Limites da Área de Medição, área onde é feita o Tracking
 # Distancia de medição: default 915-430 = 485
 BOTTOM_LIMIT_TRACK = 915 #1095  # Default 915
-UPPER_LIMIT_TRACK = 430 #408 # Default 430
+UPPER_LIMIT_TRACK = 395 #408 # Default 430
 
 MIN_CENTRAL_POINTS = 10 # qnt mínima de pontos centrais para calcular a velocidade
 # The number of seconds a blob is allowed to sit around without having
 # any new blobs matching it.
-BLOB_TRACK_TIMEOUT = 0.7  # Default 0.7
+BLOB_TRACK_TIMEOUT = 0.1  # Default 0.7
 # ---- Speed Values -----------------------------------------------------------
 CF_LANE1 = 3.15#2.964779465463  # default 2.5869977 # Correction Factor
 CF_LANE2 = 4.018997787987  # default 2.5869977    3.758897 
@@ -91,31 +92,12 @@ def calculate_speed(trails, fps):
     med_area_meter = 3.5  # metros (Valor estimado)
     med_area_pixel = r(485)
     qntd_frames = len(trails)  # default 11
-#    initial_pt, final_pt = t.linearRegression(trails, qntd_frames)  # Usando Regressão Linear
-#    dist_pixel = cv2.norm(final_pt, initial_pt)
     dist_pixel = cv2.norm(trails[0], trails[10])  # Sem usar Regressão linear
-#    if SHOW_LINEAR_REGRESSION:
-#        cv2.line(frame, initial_pt, final_pt, t.ORANGE, 5)
-#    cv2.line(frame,trails[0],trails[10], t.GREEN, 2)
-#    cv2.imwrite('img/regressao1_{}.png'.format(frameCount), frame)
     dist_meter = dist_pixel*(med_area_meter/med_area_pixel)
     speed = (dist_meter*3.6*cf)/(qntd_frames*(1/fps))
     return speed
 
-#def calculate_speed (trails, fps):
-#	# distance: distance on the frame
-#	# location: x, y coordinates on the frame
-#	# fps: framerate
-#	# mmp: meter per pixel
-##	dist = cv2.norm(trails[0], trails[10])
-#	dist_x = trails[0][0] - trails[10][0]
-#	dist_y = trails[0][1] - trails[10][1]
-#
-#	mmp_y = 0.1305 / (3 * (1 + (3.22 / 432)) * trails[0][1])
-#	mmp_x = 0.1305 / (5 * (1 + (1.5 / 773)) * (WIDTH - trails[0][1]))
-#	real_dist = math.sqrt(dist_x * mmp_x * dist_x * mmp_x + dist_y * mmp_y * dist_y * mmp_y)
-#
-#	return real_dist * fps * 250 / 3.6
+
 # ########## FIM  FUNÇÕES #####################################################
 now = datetime.datetime.now()
 DATE = f'video{VIDEO}_{now.day}-{now.month}-{now.year}_{now.hour}-{now.minute}-{now.second}'
@@ -125,8 +107,8 @@ if not os.path.exists(f"results/{DATE}"):
     os.makedirs(f"results/{DATE}/imagens/faixa1")
     os.makedirs(f"results/{DATE}/imagens/faixa2")
     os.makedirs(f"results/{DATE}/imagens/faixa3")
-
 vehicle = t.read_xml(XML_FILE, VIDEO, DATE)  # Dicionário que armazena todas as informações do xml
+
 
 KERNEL_ERODE = np.ones((r(9), r(9)), np.uint8)
 KERNEL_DILATE = np.ones((r(100), r(300)), np.uint8)  # Default (r(100), r(50))
@@ -136,7 +118,7 @@ while True:
     frame_time = time.time()
     
     if SKIP_VIDEO:
-        skip = t.skip_video(frameCount, VIDEO, frame)
+        skip = t.skip_frames(frameCount, VIDEO, frame)
         if SEE_CUTTED_VIDEO:
             if not skip:
                 frameCount += 1
@@ -154,12 +136,10 @@ while True:
     t.region_of_interest(frameGray, RESIZE_RATIO)
     
     
-    if SHOW_ROI:
-        t.region_of_interest(frame, RESIZE_RATIO)
-    if SHOW_TRACKING_AREA:  # Desenha os Limites da Área de Tracking
-        cv2.line(frame, (0, r(UPPER_LIMIT_TRACK)), (WIDTH, r(UPPER_LIMIT_TRACK)), t.WHITE, 2)
-        cv2.line(frame, (0, r(BOTTOM_LIMIT_TRACK)), (WIDTH, r(BOTTOM_LIMIT_TRACK)), t.WHITE, 2)
-        
+    s.show_roi(SHOW_ROI, frame, RESIZE_RATIO)
+    s.show_tracking_area(SHOW_TRACKING_AREA, frame, WIDTH, r(UPPER_LIMIT_TRACK), r(BOTTOM_LIMIT_TRACK))
+    
+      
     # Equalizar Contraste
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
     hist = clahe.apply(frameGray)
@@ -423,16 +403,16 @@ while True:
         # ########## MOSTRA OS VIDEOS  ########################################
 #        cv2.imshow('equ', equ)
 #        cv2.imshow('res', res)
-        cv2.imshow('fgmask', fgmask)
-        cv2.imshow('erodedmask',erodedmask)
-        cv2.imshow('dilatedmask', dilatedmask)
+        # cv2.imshow('fgmask', fgmask)
+        # cv2.imshow('erodedmask',erodedmask)
+        # cv2.imshow('dilatedmask', dilatedmask)
 #        cv2.imshow('contornos',contornos)
         cv2.imshow('out',out)
 
 #        cv2.imshow('res', res)
-        cv2.imshow('frame_lane1', frame_lane1)
-        cv2.imshow('frame_lane2', frame_lane2)
-        cv2.imshow('frame_lane3', frame_lane3)
+        # cv2.imshow('frame_lane1', frame_lane1)
+        # cv2.imshow('frame_lane2', frame_lane2)
+        # cv2.imshow('frame_lane3', frame_lane3)
         cv2.imshow('frame', frame)
 #        final = np.hstack((erodedmask, dilatedmask))
 #        cv2.imshow('final', final)
@@ -540,8 +520,9 @@ if SAVE_RESULTS:
     total_rate_detec = round(len(total_abs_errors)/(total_cars)*100, 2)
     
     
-    t.plot_graph(total_abs_errors, total_ave_abs, total_ave_per, total_rate_detec, 
-                   total_cars, len(total_abs_errors), DATE, 'total', VIDEO, '---', True,
+    t.plot_graph(total_abs_errors, total_ave_abs, total_ave_per, 
+                total_rate_detec, total_cars, len(total_abs_errors), 
+                DATE, 'total', VIDEO, '---', True,
                    list_3km_tot, list_5km_tot, list_maior5km_tot)
 
 

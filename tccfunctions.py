@@ -14,7 +14,6 @@ import itertools as it
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import cv2
-
 #from tccfunctions import *
 
 WHITE = (255, 255, 255)
@@ -61,52 +60,7 @@ def get_frame(cap, RESIZE_RATIO):
     return ret, frame
 
 
-def pairwise(iterable):
-    r"s -> (s0, s1), (s1, s2), (s2, s3), ..."
-    a, b = it.tee(iterable)
-    next(b, None)
-    return zip(a, b)
 
-
-def region_of_interest(frame, resize_ratio):
-    def r(numero):  # Faz o ajuste de escala
-        return int(numero*resize_ratio)
-    # Retângulo superior
-#    cv2.rectangle(frame, (0, 0), (r(1920), r(120)), BLACK, -1)
-    # triângulo lado direito
-#    pts = np.array([[r(1920), r(750)], [r(1320), 0], [r(1920), 0]], np.int32)
-#    cv2.fillPoly(frame, [pts], BLACK)
-    pts = np.array([[r(1920), r(790)], [r(1290), 0], [r(1920), 0]], np.int32)
-    cv2.fillPoly(frame, [pts], BLACK)
-    # triângulo lado esquerdo
-    pts3 = np.array([[0, r(620)], [r(270), 0], [0, 0]], np.int32)
-    cv2.fillPoly(frame, [pts3], BLACK)
-    # Linha entre faixas 1 e 2
-    pts1 = np.array([[r(480), r(1080)], [r(560), r(0)],
-                     [r(640), r(0)], [r(570), r(1080)]], np.int32)
-    cv2.fillPoly(frame, [pts1], BLACK)
-    # Linha entre faixas 2 e 3
-    pts7 = np.array([[r(1310), r(1080)], [r(900), r(0)],
-                     [r(990), r(0)], [r(1410), r(1080)]], np.int32)
-    cv2.fillPoly(frame, [pts7], BLACK)
-    # Faixa 3
-#    pts8 = np.array([[r(1410), r(1080)], [r(990), r(0)],
-#                      [r(1320), r(0)], [r(1920), r(750)], [r(1920), r(1080)]], np.int32)
-#    cv2.fillPoly(frame, [pts8], RED)
-    # Faixa 2
-#    pts9 = np.array([[r(570), r(1080)], [r(640), r(0)],
-#                     [r(900), r(0)], [r(1310), r(1080)]], np.int32)
-#    cv2.fillPoly(frame, [pts9], GREEN)
-    # Faixa 1
-#    pts10 = np.array([[r(480), r(1080)], [r(560), r(0)],
-#                       [r(270), 0], [0, r(620)], [0, 1080]], np.int32)
-    # faixa 1 - 4 pontos
-#    points = np.array([[[r(-150), r(1080)], [r(480), r(1080)],
-#                       [r(560), r(0)], [r(270), 0] ]], np.int32) = np.array([[[r(-150), r(1080)], [r(480), r(1080)],
-#                       [r(560), r(0)], [r(270), 0] ]], np.int32)
-#    cv2.fillPoly(frame, [pts10], BLUE)
-    
-    return frame
 
 
 
@@ -295,28 +249,27 @@ def print_xml_values(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
     try:  # Posição do texto da FAIXA 1
         text_pos = (r(143), r(43))
         cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(dict_lane1['speed']), text_pos, 2, .6, (255, 255, 0), 1)
+        cv2.putText(frame, 'speed: {}'.format(dict_lane1.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
     except:
         pass
 
     try:  # Posição do texto da FAIXA 2
         text_pos = (r(628), r(43))
         cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(str(dict_lane2['speed'])), text_pos, 2, .6, (255, 255, 0), 1)
+        cv2.putText(frame, 'speed: {}'.format(dict_lane2.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
     except:
         pass
 
     try:  # Posição do texto da FAIXA 3
         text_pos = (r(1143), r(43))
         cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(dict_lane3['speed']), text_pos, 2, .6, (255, 255, 0), 1)
+        cv2.putText(frame, 'speed: {}'.format(dict_lane3.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
     except:
         pass
-
     return
 ##### END --- XML FUNCTIONS ###################################################
 
-def skip_video(frameCount, video, frame):
+def skip_frames(frameCount, video, frame):
     skip = False
     if video == 1:
         if frameCount < 49: skip = True
@@ -410,12 +363,7 @@ def write_results_on_image(frame, frameCount, ave_speed, lane, id_car, RESIZE_RA
     
     return abs_error, per_error
 
-def print_trail(trail, frame):
-    for (a, b) in pairwise(trail):
-#        cv2.circle(frame, a, 3, BLUE, -1)
-#        cv2.line(frame, a, b, WHITE, 1)
-        cv2.line(frame, a, b, GREEN, 3)
-        cv2.circle(frame, a, 5, RED, -1)
+
         
 
 def plot_graph(abs_error_list, ave_abs_error, ave_per_error, rate_detec_lane, 
