@@ -13,6 +13,7 @@ import datetime
 from shutil import copy2
 import tccfunctions as t
 import format_frame as f
+import math_functions as m
 import colors as color
 
 def pairwise(iterable):
@@ -39,30 +40,27 @@ def print_tracking_area(parameters, frame, frame_width, upper_limit, bottom_limi
         cv2.line(frame, (0, bottom_limit), (frame_width, bottom_limit), line_color, 2)
     return
 
-def print_xml_values(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
-    def r(numero):  # Faz o ajuste de escala das posições de textos e retangulos
-        return int(numero*ratio)
-    # Mostra no video os valores das velocidades das 3 Faixas.
-    try:  # Posição do texto da FAIXA 1
-        text_pos = (r(143), r(43))
-        cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(dict_lane1.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
-    except:
-        pass
 
-    try:  # Posição do texto da FAIXA 2
-        text_pos = (r(628), r(43))
-        cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(dict_lane2.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
-    except:
-        pass
 
-    try:  # Posição do texto da FAIXA 3
-        text_pos = (r(1143), r(43))
-        cv2.rectangle(frame, (text_pos[0] - 10, text_pos[1] - 20), (text_pos[0] + 135, text_pos[1] + 10), (0, 0, 0), -1)
-        cv2.putText(frame, 'speed: {}'.format(dict_lane3.get('speed')), text_pos, 2, .6, (255, 255, 0), 1)
-    except:
-        pass
+def print_real_speeds(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
+
+    def print_speed(lane, position):
+        cv2.rectangle(frame, (position[0] - 10, position[1] - 20), (position[0] + 135, position[1] + 10), color.BLACK, -1)
+        cv2.putText(frame, f"speed: {lane.get('speed')}", position, 2, .6, color.CIAN, 1)
+        return
+
+    lane1_pos = (m.resize(143,ratio), m.resize(43,ratio))
+    lane2_pos = (m.resize(628,ratio), m.resize(43,ratio))
+    lane3_pos = (m.resize(1143,ratio), m.resize(43,ratio))
+
+    if dict_lane1.get('speed'):  
+        print_speed(dict_lane1, lane1_pos)
+
+    if dict_lane2.get('speed'):  
+        print_speed(dict_lane2, lane2_pos)
+
+    if dict_lane3.get('speed'):
+        print_speed(dict_lane3, lane3_pos)
     return
 
 

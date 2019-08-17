@@ -182,7 +182,7 @@ while True:
     if ret is True:
         t.update_info_xml(frameCount, vehicle, dict_lane1, dict_lane2, dict_lane3)
         if SHOW_REAL_SPEEDS:
-            s.print_xml_values(frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
+            s.print_real_speeds(frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
             
               
         fgmask = bgsMOG.apply(frameGray, None, 0.01)
