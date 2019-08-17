@@ -22,9 +22,9 @@ def pairwise(iterable):
     next(b, None)
     return zip(a, b)
 
-def print_contours(parameters, frame, contours, hierarchy, color=color.BLUE):
+def print_contours(parameters, frame, contours, color=color.BLUE):
     if parameters.get('SHOW_CONTOURS'):
-        cv2.drawContours(frame, contours, -1, color, 2, 8, hierarchy)
+        cv2.drawContours(frame, contours, -1, color, 2, 8)
     return
 
 def print_trail(trail, frame):

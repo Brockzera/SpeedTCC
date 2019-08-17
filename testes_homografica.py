@@ -28,7 +28,7 @@ SHOW_PARAMETERS = {
     'SHOW_TRACKING_AREA' : True,
     'SHOW_TRAIL' : True,
     'SHOW_REAL_SPEEDS' : True,
-    'SHOW_CONTOURS': False,
+    'SHOW_CONTOURS': True,
 }
 SHOW_CAR_RECTANGLE = True
 
@@ -185,22 +185,18 @@ while True:
         contours, hierarchy = f.find_contours(dilate_dmask)
         hull = f.apply_convexHull(contours)
 
-        s.print_contours(SHOW_PARAMETERS,frame, contours, hierarchy)
+        s.print_contours(SHOW_PARAMETERS,frame, contours)
 
         drawing = f.create_empty_image(dilate_dmask)
     
         #draw contours and hull points
         for i in range(len(contours)):
             if cv2.contourArea(contours[i]) > r(MIN_AREA_FOR_DETEC):
-                # draw ith contour
-                #cv2.drawContours(drawing, contours, i, t.GREEN, 0, 8, hierarchy)
-                # draw ith convex hull object
                 out = cv2.drawContours(drawing, hull, i, t.WHITE, -1, 8)
             #    area.append(cv2.contourArea(contours[i]))
             #    areahull.append(cv2.contourArea(hull[i]))
                 (x, y, w, h) = cv2.boundingRect(hull[i])
                 center = (int(x + w/2), int(y + h/2))
-                #out = cv2.rectangle(out, (x, y), (x + w, y + h), t.t.GREEN, 2) # printa na mask
                 # CONDIÇÕES PARA CONTINUAR COM TRACKING
             #    if h > r(HEIGHT)*.80 or w > r(WIDTH)*.40:
                 #    continue
@@ -617,7 +613,6 @@ while True:
     #    cv2.imshow('dilatedmask_L3', dilatedmask_L3)
         
     #    cv2.imshow('contornos',contornos)
-    #    cv2.imshow('out',out)
     #    cv2.imshow('out_L2',out_L2)
     #    cv2.imshow('out_L3',out_L3)
 
