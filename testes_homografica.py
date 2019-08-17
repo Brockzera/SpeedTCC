@@ -26,11 +26,11 @@ ARTG_FRAME = 0  # 254  # Frame q usei para exemplo no Artigo
 SHOW_PARAMETERS = {
     'SHOW_ROI' : True,
     'SHOW_TRACKING_AREA' : True,
-    'SHOW_TRAIL' : True
+    'SHOW_TRAIL' : True,
+    'SHOW_REAL_SPEEDS' : True
 }
 SHOW_CAR_RECTANGLE = True
 
-SHOW_REAL_SPEEDS = True
 SHOW_FRAME_COUNT = True
 
 SKIP_VIDEO = True
@@ -106,8 +106,8 @@ process_times = []
 def r(numero):
     return int(numero*RESIZE_RATIO)
 
-def crop(img):
-    return img[30:370, 205:620]
+def crop(img,start_pos, final_pos):
+    return img[start_pos[0]:start_pos[1], final_pos[0]:final_pos[1]]
 
 def calculate_speed(trails, fps):
     med_area_meter = 3.9  # metros (Valor estimado)
@@ -159,43 +159,36 @@ while True:
                     break
                 continue
     start_frame_time = time.time()        
-    #  frame[np.where((frame == [64,64,64]).all(axis = 2))] = [200,200,200]
 
-    frameGray = f.bgr_to_gray(frame)
-    f.apply_roi(frameGray, RESIZE_RATIO)
-    
     s.print_roi(SHOW_PARAMETERS, frame, RESIZE_RATIO)
     s.print_tracking_area(SHOW_PARAMETERS, frame, WIDTH, r(UPPER_LIMIT_TRACK), r(BOTTOM_LIMIT_TRACK))
-        
-    # Equalizar Contraste
-    hist = f.apply_CLAHE(frameGray)
+
+    # Image manipulation
+    gray_frame = f.bgr_to_gray(frame)
+    f.apply_roi(gray_frame, RESIZE_RATIO)
+    
+    hist = f.apply_CLAHE(gray_frame) # Histogram Equalization
 
     
     frame_lane1 = f.apply_perpective(hist, 1, RESIZE_RATIO)
     frame_lane2 = f.apply_perpective(hist, 2, RESIZE_RATIO)
     frame_lane3 = f.apply_perpective(hist, 3, RESIZE_RATIO)
     
-    hist = frame_lane1
-    
-    if ret is True:
+    if ret:
         t.update_info_xml(frameCount, vehicle, dict_lane1, dict_lane2, dict_lane3)
-        if SHOW_REAL_SPEEDS:
-            s.print_real_speeds(frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
-            
+        s.print_real_speeds(SHOW_PARAMETERS,frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
               
-        fgmask = bgsMOG.apply(hist, None, 0.01)
-        erodedmask = cv2.erode(fgmask, KERNEL_ERODE, iterations=1)
-        dilatedmask = cv2.dilate(erodedmask, KERNEL_DILATE, iterations=1)
-        contours, hierarchy = cv2.findContours(dilatedmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        fgmask = bgsMOG.apply(frame_lane1, None, 0.01)
+        erodedmask = f.apply_erode(fgmask, KERNEL_ERODE)
+        dilatedmask = f.apply_erode(erodedmask, KERNEL_DILATE)
+        contours = f.find_contours(dilatedmask)
+
         #contornos =  cv2.drawContours(frame, contours, -1, BLUE, 2, 8, hierarchy)
-        hull = []
-        for i in range(len(contours)):  # calculate points for each contour
-            # creating convex hull object for each contour
-            hull.append(cv2.convexHull(contours[i], False))
+
+        hull = f.apply_convexHull(contours)
         # create an empty black image
         drawing = np.zeros((dilatedmask.shape[0], dilatedmask.shape[1], 3), np.uint8)
-    #    area = []
-    #    areahull = []
+    
         #draw contours and hull points
         for i in range(len(contours)):
             if cv2.contourArea(contours[i]) > r(MIN_AREA_FOR_DETEC):

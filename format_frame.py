@@ -15,6 +15,8 @@ import tccfunctions as t
 import colors as color
 import math_functions as m
 
+def crop(img,start_pos, final_pos):
+    return img[start_pos[0]:start_pos[1], final_pos[0]:final_pos[1]]
 
 def bgr_to_gray(bgr_frame):
     return cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2GRAY)
@@ -97,7 +99,24 @@ def apply_perpective(frame, lane, resize_ratio, output_size=(640,1080)):
     return
 
 
+def apply_erode(mask, kernel_erode):
+    return cv2.erode(mask, kernel_erode, iterations=1)
 
+
+def apply_dilate(mask, kernel_dilate):
+    return cv2.dilate(mask, kernel_dilate, iterations=1)
+
+### GET IMAGE INFO
+
+def apply_convexHull(contours):
+    hull = []
+    for i in range(len(contours)):  
+        hull.append(cv2.convexHull(contours[i], False))
+    return hull
+
+def find_contours(mask):
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return contours
 
 if __name__ == '__main__':
     print('arquivo format_frame executado. \n Esse arquivo possui apenas funcoes')

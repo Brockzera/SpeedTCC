@@ -17,7 +17,7 @@ import math_functions as m
 import colors as color
 
 def pairwise(iterable):
-    r"s -> (s0, s1), (s1, s2), (s2, s3), ..."
+    # r"s -> (s0, s1), (s1, s2), (s2, s3), ..."
     a, b = it.tee(iterable)
     next(b, None)
     return zip(a, b)
@@ -43,7 +43,7 @@ def print_tracking_area(parameters, frame, frame_width, upper_limit, bottom_limi
     return
 
 
-def print_real_speeds(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
+def print_real_speeds(parameters, frame, ratio, dict_lane1, dict_lane2, dict_lane3):
 
     def print_speed(lane, position):
         cv2.rectangle(frame, (position[0] - 10, position[1] - 20), (position[0] + 135, position[1] + 10), color.BLACK, -1)
@@ -53,15 +53,15 @@ def print_real_speeds(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
     lane1_pos = (m.resize(143,ratio), m.resize(43,ratio))
     lane2_pos = (m.resize(628,ratio), m.resize(43,ratio))
     lane3_pos = (m.resize(1143,ratio), m.resize(43,ratio))
+    if parameters.get('SHOW_REAL_SPEEDS'):
+        if dict_lane1.get('speed'):  
+            print_speed(dict_lane1, lane1_pos)
 
-    if dict_lane1.get('speed'):  
-        print_speed(dict_lane1, lane1_pos)
+        if dict_lane2.get('speed'):  
+            print_speed(dict_lane2, lane2_pos)
 
-    if dict_lane2.get('speed'):  
-        print_speed(dict_lane2, lane2_pos)
-
-    if dict_lane3.get('speed'):
-        print_speed(dict_lane3, lane3_pos)
+        if dict_lane3.get('speed'):
+            print_speed(dict_lane3, lane3_pos)
     return
 
 
