@@ -22,9 +22,18 @@ def pairwise(iterable):
     next(b, None)
     return zip(a, b)
 
+
 def print_contours(parameters, frame, contours, color=color.BLUE):
     if parameters.get('SHOW_CONTOURS'):
         cv2.drawContours(frame, contours, -1, color, 2, 8)
+    return
+
+# TODO 
+def print_rectangle(parameters, frame, pt1, pt2 ):
+    if parameters.get('SHOW_CAR_RECTANGLE'):
+        if center[1] > r(UPPER_LIMIT_TRACK):
+            area_L1.append(w*h)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), t.GREEN, 2)
     return
 
 def print_trail(trail, frame):

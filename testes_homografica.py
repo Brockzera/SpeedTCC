@@ -10,6 +10,8 @@ import show_infos as s
 import format_frame as f
 import datetime
 from shutil import copy2
+import math_functions as m
+
 from sys import exit
 #import math
 #######  CONSTANT VALUES ###################################################
@@ -29,6 +31,7 @@ SHOW_PARAMETERS = {
     'SHOW_TRAIL' : True,
     'SHOW_REAL_SPEEDS' : True,
     'SHOW_CONTOURS': True,
+    'SHOW_CAR_RECTANGLE': True
 }
 SHOW_CAR_RECTANGLE = True
 
@@ -196,7 +199,7 @@ while True:
             #    area.append(cv2.contourArea(contours[i]))
             #    areahull.append(cv2.contourArea(hull[i]))
                 (x, y, w, h) = cv2.boundingRect(hull[i])
-                center = (int(x + w/2), int(y + h/2))
+                center = m.get_center_of_rectangle((x, y), ( w, h))
                 # CONDIÇÕES PARA CONTINUAR COM TRACKING
             #    if h > r(HEIGHT)*.80 or w > r(WIDTH)*.40:
                 #    continue
@@ -213,9 +216,7 @@ while True:
                         area_L1.append(w*h)
                         cv2.rectangle(frame_lane1, (x, y), (x+w, y+h), t.GREEN, 2)
                         cv2.rectangle(frame, (x, y), (x+w, y+h), t.GREEN, 2)
-                    else:
-                        cv2.rectangle(frame_lane1, (x, y), (x+w, y+h), t.PINK, 2)
-                        cv2.rectangle(frame, (x, y), (x+w, y+h), t.PINK, 2)
+                    
 
                 # ################## TRACKING #################################
                 # Look for existing blobs that match this one
@@ -617,7 +618,7 @@ while True:
     #    cv2.imshow('out_L3',out_L3)
 
     #    cv2.imshow('res', res)
-    #    cv2.imshow('frame_lane1', frame_lane1)
+        cv2.imshow('frame_lane1', frame_lane1)
     #    cv2.imshow('frame_lane2', frame_lane2)
     #    cv2.imshow('frame_lane3', frame_lane3)
         cv2.imshow('frame', frame)
