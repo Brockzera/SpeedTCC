@@ -20,7 +20,7 @@ XML_FILE = './Dataset/video{}.xml'.format(VIDEO)
 RESIZE_RATIO = .2222 #0.7697  720p=.6667 480p=.4445 360p=.33333 240p=.22222 144p=.13333
 if RESIZE_RATIO > 1:
     exit('ERRO: AJUSTE O RESIZE_RATIO')
-CLOSE_VIDEO = 250 #2950 #5934  # 1-6917 # 5-36253
+CLOSE_VIDEO = 350 #2950 #5934  # 1-6917 # 5-36253
 ARTG_FRAME = 0  # 254  # Frame q usei para exemplo no Artigo
 
 SHOW_PARAMETERS = {
@@ -170,13 +170,12 @@ while True:
     # Equalizar Contraste
     hist = f.apply_CLAHE(frameGray)
 
-    frameGray = hist
     
-    frame_lane1 = t.perpective(frameGray, 1, RESIZE_RATIO)
-    frame_lane2 = t.perpective(frameGray, 2, RESIZE_RATIO)
-    frame_lane3 = t.perpective(frameGray, 3, RESIZE_RATIO)
+    frame_lane1 = f.apply_perpective(hist, 1, RESIZE_RATIO)
+    frame_lane2 = f.apply_perpective(hist, 2, RESIZE_RATIO)
+    frame_lane3 = f.apply_perpective(hist, 3, RESIZE_RATIO)
     
-    frameGray = frame_lane1
+    hist = frame_lane1
     
     if ret is True:
         t.update_info_xml(frameCount, vehicle, dict_lane1, dict_lane2, dict_lane3)
@@ -184,7 +183,7 @@ while True:
             s.print_real_speeds(frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
             
               
-        fgmask = bgsMOG.apply(frameGray, None, 0.01)
+        fgmask = bgsMOG.apply(hist, None, 0.01)
         erodedmask = cv2.erode(fgmask, KERNEL_ERODE, iterations=1)
         dilatedmask = cv2.dilate(erodedmask, KERNEL_DILATE, iterations=1)
         contours, hierarchy = cv2.findContours(dilatedmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

@@ -448,64 +448,9 @@ def separar_por_kmh(abs_error_list_mod):
             list_maior5km.append(value)
     return list_3km, list_5km, list_maior5km
 
-def perpective(frame, lane, RESIZE_RATIO):
-    def r(numero):  # Faz o ajuste de escala das posições de textos e retangulos
-        return int(numero*RESIZE_RATIO)
-#    mask_h = frame.shape[0]
-#    mask_w = frame.shape[1]
-#    mask_crop = np.zeros((mask_h, mask_w), dtype=np.uint8)
-    if lane == 1:
-        points = np.array([[[r(-150), r(1080)], [r(480), r(1080)],
-                           [r(560), r(0)], [r(270), 0] ]], np.int32)
-        pt4 = [r(35),0]
-        pt3 = [r(610),0]
-        pt2 = [r(640), r(1080)]
-        pt1 = [0, r(1080)]
-        
-        width = r(640)
-        height = r(1080)
-        target_pts = np.array([pt1,pt2,pt3,pt4 ], np.float32)
-        H, mask_crop = cv2.findHomography(points, target_pts, cv2.RANSAC)
-        warped_frame = cv2.warpPerspective(frame, H, (width, height))
-        return warped_frame
-        
-    elif lane == 2:
-        points = np.array([[[r(570), r(1080)],  [r(1310), r(1080)],
-                            [r(900), r(0)],[r(640), r(0)]]], np.int32)
-        pt4 = [r(50),0]
-        pt3 = [r(570),0]
-        pt2 = [r(640), r(1080)]
-        pt1 = [0, r(1080)]
-        
-        width = r(640) # 640
-        height = r(1080)
-        target_pts = np.array([pt1,pt2,pt3,pt4 ], np.float32)
-        H, mask_crop = cv2.findHomography(points, target_pts, cv2.RANSAC)
-        warped_frame = cv2.warpPerspective(frame, H, (width, height))
-        return warped_frame
-        
-        
-    elif lane == 3:
-        points = np.array([[[r(1410), r(1080)], [r(2170), r(1080)],
-                            [r(1320), r(0)], [r(990), r(0)]]], np.int32)
-        pt4 = [r(15),0]
-        pt3 = [r(670),0]
-        pt2 = [r(640), r(1080)]
-        pt1 = [0, r(1080)] 
-        # dimensoes da output image    
-        width = r(640)
-        height = r(1080)
-        target_pts = np.array([pt1,pt2,pt3,pt4 ], np.float32)
-        H, mask_crop = cv2.findHomography(points, target_pts, cv2.RANSAC)
-        warped_frame = cv2.warpPerspective(frame, H, (width, height))
-        return warped_frame
+
     
-#    cv2.fillPoly(mask_crop, points, RED)
-#    res = cv2.bitwise_and(frame,frame,mask=mask_crop)
-#    rect = cv2.boundingRect(points) # returns (x,y,w,h) of the rect
-#    cropped = res[rect[1]: rect[1] + rect[3], rect[0]: rect[0] + rect[2]]
-#                # faixa 3 crop
-#    frame_crop = frame[0:r(1079), r(990):r(1920)]
+
         
 if __name__ == '__main__':
     print('arquivo ERRADOOOOOOO')
