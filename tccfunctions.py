@@ -228,12 +228,12 @@ def update_info_xml(frameCount, vehicle, dict_lane1, dict_lane2, dict_lane3):
                 dict_lane1['frame_start'] = vehicle[str(frameCount)]['frame_start']
                 dict_lane1['frame_end'] = vehicle[str(frameCount)]['frame_end']
             elif lane_state == '2':
-                #print('Faixa 2')
+                # print('Faixa 2')
                 dict_lane2['speed'] = vehicle[str(frameCount)]['speed']
                 dict_lane2['frame_start'] = vehicle[str(frameCount)]['frame_start']
                 dict_lane2['frame_end'] = vehicle[str(frameCount)]['frame_end']
             elif lane_state == '3':
-                #print('Faixa 3')
+                # print('Faixa 3')
                 dict_lane3['speed'] = vehicle[str(frameCount)]['speed']
                 dict_lane3['frame_start'] = vehicle[str(frameCount)]['frame_start']
                 dict_lane3['frame_end'] = vehicle[str(frameCount)]['frame_end']
@@ -388,15 +388,7 @@ def plot_graph(abs_error_list, ave_abs_error, ave_per_error, rate_detec_lane,
         
         plt.xlabel('Medições')
         plt.ylabel('Erro Absoluto (km/h)')
-#        plt.title(f'{titulo} - Video {VIDEO} \n\n'
-#              f'Média dos erros absolutos =  {ave_abs_error} km/h\n'
-#              f'Média dos erros percentuais = {ave_per_error} % \n'
-#              f' Qtnd de erros até 3km/h: {len(list_3km)} de {real_total_lane} ({round(len(list_3km)/real_total_lane*100, 2)} %)\n'
-#              f' Qtnd de erros até 5km/h: {len(list_5km)} de {real_total_lane} ({round(len(list_5km)/real_total_lane*100, 2)} %)\n'
-#              f' Qtnd de erros > 5km/h: {len(list_maior5km)} de {real_total_lane} ({round(len(list_maior5km)/real_total_lane*100, 2)} %)\n'
-#              f'Taxa de Detecção: {rate_detec_lane} % \n'
-#              f'Carros detectados: {total_cars_lane} de {real_total_lane} \n'
-#              f'Fator de correção: {cf}')
+
         
         plt.plot([0, len(abs_error_list) + 3], [0, 0], color='k', linestyle='-', linewidth=1)
         plt.plot([0, len(abs_error_list) + 3], [3, 3], color='k', linestyle=':', linewidth=1)
@@ -408,31 +400,6 @@ def plot_graph(abs_error_list, ave_abs_error, ave_per_error, rate_detec_lane,
         plt.savefig(f'results/{DATE}/graficos/result_{DATE}_F{lane}_lin.png', bbox_inches='tight', pad_inches=0.3)
         plt.savefig(f'results/{DATE}/graficos/pdfs/result_{DATE}_F{lane}_lin.pdf', bbox_inches='tight', pad_inches=0.3)
     
-#    if SHOW_LIN:
-#        plt.figure('Total', figsize=[9,7])
-#        abs_list = []
-#        for value in abs_error_list:
-#            abs_list.append(abs(value))
-#        
-#        plt.xlabel('Medições')
-#        plt.ylabel('Erro Absoluto (km/h)')
-#        plt.title(f'{titulo} - Video {VIDEO} \n\n'
-#              f'Média dos erros absolutos =  {ave_abs_error} km/h\n'
-#              f'Média dos erros percentuais = {ave_per_error} % \n'
-#              f' Qtnd de erros até 3km/h: {len(list_3km)} de {real_total_lane} ({round(len(list_3km)/real_total_lane*100, 2)} %)\n'
-#              f' Qtnd de erros até 5km/h: {len(list_5km)} de {real_total_lane} ({round(len(list_5km)/real_total_lane*100, 2)} %)\n'
-#              f' Qtnd de erros > 5km/h: {len(list_maior5km)} de {real_total_lane} ({round(len(list_maior5km)/real_total_lane*100, 2)} %)\n'
-#              f'Taxa de Detecção: {rate_detec_lane} % \n'
-#              f'Carros detectados: {total_cars_lane} de {real_total_lane} \n'
-#              f'Fator de correção: {cf}')
-#        
-#        plt.plot([0, len(abs_list) + 3], [0, 0], color='k', linestyle='-', linewidth=1)
-#        plt.plot([0, len(abs_list) + 3], [3, 3], color='k', linestyle=':', linewidth=1)
-#        plt.plot([0, len(abs_list) + 3], [5, 5], color='k', linestyle='--', linewidth=1)
-#        
-#        plt.plot(sorted(abs_list), 'ro-')
-#        plt.savefig(f'results/{DATE}/graficos/result_{DATE}_F{lane}_lin.png', bbox_inches='tight', pad_inches=0.3)
-#        plt.savefig(f'results/{DATE}/graficos/pdfs/result_{DATE}_F{lane}_lin.pdf', bbox_inches='tight', pad_inches=0.3)
 
 
 def separar_por_kmh(abs_error_list_mod):
@@ -453,7 +420,7 @@ def separar_por_kmh(abs_error_list_mod):
 
         
 if __name__ == '__main__':
-    print('arquivo ERRADOOOOOOO')
+    print('arquivo tccfunctions executado. \n Esse arquivo possui apenas funcoes')
                 
           
         
