@@ -198,9 +198,7 @@ while True:
                 # Look for existing blobs that match this one
                 closest_blob = None
                 if tracked_blobs:
-                    # Sort the blobs we have seen in previous frames by pixel distance from this one
-                    # closest_blobs = sorted(tracked_blobs, key=lambda b: cv2.norm(b['trail'][0], center))
-                    closest_blobs = m.sort_tracked_blob(tracked_blobs, center)
+                    closest_blobs = m.sort_tracked_blobs(tracked_blobs, center)
 
                     # Starting from the closest blob, make sure the blob in question is in the expected direction
                     distance = 0.0
@@ -210,13 +208,8 @@ while True:
                         # Check if the distance is close enough to "lock on"
                         if distance < r(BLOB_LOCKON_DIST_PX_MAX) and distance > r(BLOB_LOCKON_DIST_PX_MIN):
                             closest_blob = close_blob
-                            continue # retirar depois
-                            # If it's close enough, make sure the blob was moving in the expected direction
-                        #    if close_blob['trail'][0][1] < center[1]:  # verifica se esta na dir up
-                        #        continue
-                        #    else:
-                        #        closest_blob = close_blob
-                        #        continue  # defalut break
+                            continue
+                        
 
                     if closest_blob:
                         # If we found a blob to attach this blob to, we should

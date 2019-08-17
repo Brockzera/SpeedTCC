@@ -23,7 +23,7 @@ def calculate_speed(trails, fps, ratio, correction_factor):
 
 # TRACKING
 
-def sort_tracked_blob(tracked_blobs, center):
+def sort_tracked_blobs(tracked_blobs, center):
     '''Sort the blobs we have seen in previous 
     frames by pixel distance from this one'''
     closest_blobs = sorted(tracked_blobs, key=lambda b: cv2.norm(b['trail'][0], center))
