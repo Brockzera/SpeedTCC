@@ -28,12 +28,12 @@ def print_contours(parameters, frame, contours, color=color.BLUE):
         cv2.drawContours(frame, contours, -1, color, 2, 8)
     return
 
-# TODO 
-def print_rectangle(parameters, frame, pt1, pt2 ):
+
+def print_vehicle_rectangle(parameters, frame, pt1, pt2, color=color.GREEN ):
     if parameters.get('SHOW_CAR_RECTANGLE'):
-        if center[1] > r(UPPER_LIMIT_TRACK):
-            area_L1.append(w*h)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), t.GREEN, 2)
+        x,y = pt1[0], pt1[1]
+        w,h = pt2[0], pt2[1]
+        cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
     return
 
 def print_trail(trail, frame):
@@ -49,10 +49,10 @@ def print_roi(parameters, frame, RESIZE_RATIO):
     return
 
 
-def print_tracking_area(parameters, frame, frame_width, upper_limit, bottom_limit, line_color=(255, 255, 255)):
+def print_tracking_area(parameters, frame, frame_width, upper_limit, bottom_limit, color=color.WHITE):
     if parameters.get('SHOW_TRACKING_AREA'): 
-        cv2.line(frame, (0, upper_limit), (frame_width, upper_limit), line_color, 2)
-        cv2.line(frame, (0, bottom_limit), (frame_width, bottom_limit), line_color, 2)
+        cv2.line(frame, (0, upper_limit), (frame_width, upper_limit), color, 2)
+        cv2.line(frame, (0, bottom_limit), (frame_width, bottom_limit), color, 2)
     return
 
 

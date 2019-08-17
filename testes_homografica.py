@@ -211,11 +211,10 @@ while True:
                     continue
                 
                 
-                if SHOW_CAR_RECTANGLE:
-                    if center[1] > r(UPPER_LIMIT_TRACK):
-                        area_L1.append(w*h)
-                        cv2.rectangle(frame_lane1, (x, y), (x+w, y+h), t.GREEN, 2)
-                        cv2.rectangle(frame, (x, y), (x+w, y+h), t.GREEN, 2)
+                if center[1] > r(UPPER_LIMIT_TRACK):
+                    area_L1.append(w*h)
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame, (x, y), (w, h))
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame_lane1, (x, y), (w, h))
                     
 
                 # ################## TRACKING #################################
