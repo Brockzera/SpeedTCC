@@ -571,7 +571,7 @@ while True:
     #    cv2.imshow('out_L3',out_L3)
 
     #    cv2.imshow('res', res)
-        cv2.imshow('frame_lane1', frame_lane1)
+        # cv2.imshow('frame_lane1', frame_lane1)
     #    cv2.imshow('frame_lane2', frame_lane2)
     #    cv2.imshow('frame_lane3', frame_lane3)
         cv2.imshow('frame', frame)
