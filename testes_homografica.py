@@ -109,17 +109,8 @@ process_times = []
 def r(numero):
     return int(numero*RESIZE_RATIO)
 
-def crop(img,start_pos, final_pos):
-    return img[start_pos[0]:start_pos[1], final_pos[0]:final_pos[1]]
 
-def calculate_speed(trails, fps):
-    med_area_meter = 3.9  # metros (Valor estimado)
-    med_area_pixel = r(485)
-    qntd_frames =  11 #len(trails)  # default 11
-    dist_pixel = cv2.norm(trails[0], trails[10])  
-    dist_meter = dist_pixel*(med_area_meter/med_area_pixel)
-    speed = (dist_meter*3.6*cf)/(qntd_frames*(1/fps))
-    return speed
+
 
 # ########## FIM  FUNÇÕES #####################################################
 now = datetime.datetime.now()

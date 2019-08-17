@@ -123,5 +123,8 @@ def find_contours(mask):
 def create_empty_image(frame): # create an empty black image
     return np.zeros((frame.shape[0], frame.shape[1], 3), np.uint8)
 
+def crop(img,start_pos, final_pos):
+    return img[start_pos[0]:start_pos[1], final_pos[0]:final_pos[1]]
+
 if __name__ == '__main__':
     print('arquivo format_frame executado. \n Esse arquivo possui apenas funcoes')
