@@ -36,7 +36,10 @@ def apply_roi(frame, resize_ratio):
     cv2.fillPoly(frame, [pts7], color.BLACK)
     return frame
 
-
+def apply_CLAHE(gray_frame, clipLimit=3.0, tileGridSize=(8,8)):
+    clahe = cv2.createCLAHE(clipLimit, tileGridSize)
+    hist = clahe.apply(gray_frame)
+    return hist
 
 
 

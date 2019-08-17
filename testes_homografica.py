@@ -168,8 +168,7 @@ while True:
     s.print_tracking_area(SHOW_PARAMETERS, frame, WIDTH, r(UPPER_LIMIT_TRACK), r(BOTTOM_LIMIT_TRACK))
         
     # Equalizar Contraste
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
-    hist = clahe.apply(frameGray)
+    hist = f.apply_CLAHE(frameGray)
 
     frameGray = hist
     

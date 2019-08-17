@@ -29,17 +29,18 @@ def print_trail(trail, frame):
         cv2.circle(frame, a, 5, color.RED, -1)
     return
 
+
 def print_roi(parameters, frame, RESIZE_RATIO):
     if parameters.get('SHOW_ROI'):
       f.apply_roi(frame, RESIZE_RATIO)
     return
+
 
 def print_tracking_area(parameters, frame, frame_width, upper_limit, bottom_limit, line_color=(255, 255, 255)):
     if parameters.get('SHOW_TRACKING_AREA'): 
         cv2.line(frame, (0, upper_limit), (frame_width, upper_limit), line_color, 2)
         cv2.line(frame, (0, bottom_limit), (frame_width, bottom_limit), line_color, 2)
     return
-
 
 
 def print_real_speeds(frame, ratio, dict_lane1, dict_lane2, dict_lane3):
