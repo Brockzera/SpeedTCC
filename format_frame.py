@@ -99,14 +99,14 @@ def apply_perpective(frame, lane, resize_ratio, output_size=(640,1080)):
     return
 
 
-def apply_erode(mask, kernel_erode):
-    return cv2.erode(mask, kernel_erode, iterations=1)
+def apply_erode(mask, kernel_erode, iterations=1):
+    return cv2.erode(mask, kernel_erode, iterations)
 
 
-def apply_dilate(mask, kernel_dilate):
-    return cv2.dilate(mask, kernel_dilate, iterations=1)
+def apply_dilate(mask, kernel_dilate, iterations=1):
+    return cv2.dilate(mask, kernel_dilate, iterations)
 
-### GET IMAGE INFO
+### GET FRAME INFO
 
 def apply_convexHull(contours):
     hull = []
@@ -115,8 +115,13 @@ def apply_convexHull(contours):
     return hull
 
 def find_contours(mask):
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    return contours
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return (contours, hierarchy)
+
+### Create Images
+
+def create_empty_image(frame): # create an empty black image
+    return np.zeros((frame.shape[0], frame.shape[1], 3), np.uint8)
 
 if __name__ == '__main__':
     print('arquivo format_frame executado. \n Esse arquivo possui apenas funcoes')

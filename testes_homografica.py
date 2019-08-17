@@ -17,17 +17,18 @@ VIDEO = 1
 VIDEO_FILE = './Dataset/video{}.avi'.format(VIDEO)
 XML_FILE = './Dataset/video{}.xml'.format(VIDEO)
 
-RESIZE_RATIO = .2222 #0.7697  720p=.6667 480p=.4445 360p=.33333 240p=.22222 144p=.13333
+RESIZE_RATIO = .4445 #0.7697  720p=.6667 480p=.4445 360p=.33333 240p=.22222 144p=.13333
 if RESIZE_RATIO > 1:
     exit('ERRO: AJUSTE O RESIZE_RATIO')
-CLOSE_VIDEO = 350 #2950 #5934  # 1-6917 # 5-36253
+CLOSE_VIDEO = 770 #2950 #5934  # 1-6917 # 5-36253
 ARTG_FRAME = 0  # 254  # Frame q usei para exemplo no Artigo
 
 SHOW_PARAMETERS = {
     'SHOW_ROI' : True,
     'SHOW_TRACKING_AREA' : True,
     'SHOW_TRAIL' : True,
-    'SHOW_REAL_SPEEDS' : True
+    'SHOW_REAL_SPEEDS' : True,
+    'SHOW_CONTOURS': False,
 }
 SHOW_CAR_RECTANGLE = True
 
@@ -179,15 +180,14 @@ while True:
         s.print_real_speeds(SHOW_PARAMETERS,frame, RESIZE_RATIO, dict_lane1, dict_lane2, dict_lane3)
               
         fgmask = bgsMOG.apply(frame_lane1, None, 0.01)
-        erodedmask = f.apply_erode(fgmask, KERNEL_ERODE)
-        dilatedmask = f.apply_erode(erodedmask, KERNEL_DILATE)
-        contours = f.find_contours(dilatedmask)
-
-        #contornos =  cv2.drawContours(frame, contours, -1, BLUE, 2, 8, hierarchy)
-
+        eroded_mask = f.apply_erode(fgmask, KERNEL_ERODE)
+        dilate_dmask = f.apply_dilate(eroded_mask, KERNEL_DILATE)
+        contours, hierarchy = f.find_contours(dilate_dmask)
         hull = f.apply_convexHull(contours)
-        # create an empty black image
-        drawing = np.zeros((dilatedmask.shape[0], dilatedmask.shape[1], 3), np.uint8)
+
+        s.print_contours(SHOW_PARAMETERS,frame, contours, hierarchy)
+
+        drawing = f.create_empty_image(dilate_dmask)
     
         #draw contours and hull points
         for i in range(len(contours)):
