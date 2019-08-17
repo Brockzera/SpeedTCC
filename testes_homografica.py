@@ -100,7 +100,6 @@ results_lane1 = {}
 results_lane2 = {}
 results_lane3 = {}
 
-area_L1 = []
 area_L2 = []
 area_L3 = []
 
@@ -195,9 +194,6 @@ while True:
         #draw contours and hull points
         for i in range(len(contours)):
             if cv2.contourArea(contours[i]) > r(MIN_AREA_FOR_DETEC):
-                out = cv2.drawContours(drawing, hull, i, t.WHITE, -1, 8)
-            #    area.append(cv2.contourArea(contours[i]))
-            #    areahull.append(cv2.contourArea(hull[i]))
                 (x, y, w, h) = cv2.boundingRect(hull[i])
                 center = m.get_center_of_rectangle((x, y), ( w, h))
                 # CONDIÇÕES PARA CONTINUAR COM TRACKING
@@ -212,7 +208,6 @@ while True:
                 
                 
                 if center[1] > r(UPPER_LIMIT_TRACK):
-                    area_L1.append(w*h)
                     s.print_vehicle_rectangle(SHOW_PARAMETERS, frame, (x, y), (w, h))
                     s.print_vehicle_rectangle(SHOW_PARAMETERS, frame_lane1, (x, y), (w, h))
                     
@@ -250,7 +245,7 @@ while True:
                             
                             if len(closest_blob['trail']) > MIN_CENTRAL_POINTS:
                                 cf = CF_LANE1
-                                closest_blob['speed'].insert(0, calculate_speed(closest_blob['trail'], FPS))
+                                closest_blob['speed'].insert(0, m.calculate_speed(closest_blob['trail'], FPS, RESIZE_RATIO,CF_LANE1))
                                 lane = 1
                                 ave_speed = np.mean(closest_blob['speed'])
                                 abs_error, per_error = t.write_results_on_image(frame, frameCount, ave_speed, lane, closest_blob['id'], RESIZE_RATIO, VIDEO,
@@ -368,7 +363,7 @@ while True:
 
                             if len(closest_blob_L2['trail']) > MIN_CENTRAL_POINTS:                                                                    
                                 cf = CF_LANE2
-                                closest_blob_L2['speed'].insert(0, calculate_speed(closest_blob_L2['trail'], FPS))
+                                closest_blob_L2['speed'].insert(0, m.calculate_speed(closest_blob_L2['trail'], FPS,RESIZE_RATIO, CF_LANE2))
                                 lane = 2
                                 ave_speed = np.mean(closest_blob_L2['speed'])
                                 abs_error, per_error = t.write_results_on_image(frame, frameCount, ave_speed, lane, closest_blob_L2['id'], RESIZE_RATIO, VIDEO,
@@ -484,7 +479,7 @@ while True:
 
                             if len(closest_blob_L3['trail']) > MIN_CENTRAL_POINTS:
                                 cf = CF_LANE3                                    
-                                closest_blob_L3['speed'].insert(0, calculate_speed(closest_blob_L3['trail'], FPS))
+                                closest_blob_L3['speed'].insert(0, m.calculate_speed(closest_blob_L3['trail'], FPS, RESIZE_RATIO, CF_LANE3))
                                 lane = 3
                                 ave_speed = np.mean(closest_blob_L3['speed'])
                                 abs_error, per_error = t.write_results_on_image(frame, frameCount, ave_speed, lane, closest_blob_L3['id'], RESIZE_RATIO, VIDEO,
