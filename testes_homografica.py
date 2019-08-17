@@ -13,7 +13,6 @@ from shutil import copy2
 import math_functions as m
 
 from sys import exit
-#import math
 #######  CONSTANT VALUES ###################################################
 VIDEO = 1
 VIDEO_FILE = './Dataset/video{}.avi'.format(VIDEO)
@@ -100,7 +99,6 @@ results_lane1 = {}
 results_lane2 = {}
 results_lane3 = {}
 
-area_L2 = []
 area_L3 = []
 
 process_times = []
@@ -108,10 +106,6 @@ process_times = []
 # ##############  FUNÇÕES #####################################################
 def r(numero):
     return int(numero*RESIZE_RATIO)
-
-
-
-
 # ########## FIM  FUNÇÕES #####################################################
 now = datetime.datetime.now()
 DATE = f'video{VIDEO}_{now.day}-{now.month}-{now.year}_{now.hour}-{now.minute}-{now.second}'
@@ -187,10 +181,7 @@ while True:
             if cv2.contourArea(contours[i]) > r(MIN_AREA_FOR_DETEC):
                 (x, y, w, h) = cv2.boundingRect(hull[i])
                 center = m.get_center_of_rectangle((x, y), ( w, h))
-                # CONDIÇÕES PARA CONTINUAR COM TRACKING
-            #    if h > r(HEIGHT)*.80 or w > r(WIDTH)*.40:
-                #    continue
-
+               
                 if w < r(340) and h < r(340):  # ponto que da pra mudar
                     continue
                 # Área de medição do Tracking
@@ -208,7 +199,8 @@ while True:
                 closest_blob = None
                 if tracked_blobs:
                     # Sort the blobs we have seen in previous frames by pixel distance from this one
-                    closest_blobs = sorted(tracked_blobs, key=lambda b: cv2.norm(b['trail'][0], center))
+                    # closest_blobs = sorted(tracked_blobs, key=lambda b: cv2.norm(b['trail'][0], center))
+                    closest_blobs = m.sort_tracked_blob(tracked_blobs, center)
 
                     # Starting from the closest blob, make sure the blob in question is in the expected direction
                     distance = 0.0
@@ -275,19 +267,15 @@ while True:
 
 
         fgmask_lane2 = bgsMOG.apply(frame_lane2, None, 0.01)
-        erodedmask_lane2 = cv2.erode(fgmask_lane2, KERNEL_ERODE_L2, iterations=1)
-        dilatedmask_lane2 = cv2.dilate(erodedmask_lane2, KERNEL_DILATE_L2, iterations=1)
-        contours_L2, hierarchy = cv2.findContours(dilatedmask_lane2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        erodedmask_lane2 = f.apply_erode(fgmask_lane2, KERNEL_ERODE)
+        dilatedmask_lane2 = f.apply_dilate(erodedmask_lane2, KERNEL_DILATE)
+        contours_L2, hierarchy = f.find_contours(dilatedmask_lane2)
+        hull_L2 = f.apply_convexHull(contours_L2)
 
-        #contornos =  cv2.drawContours(frame, contours, -1, BLUE, 2, 8, hierarchy)
-        hull_L2 = []
-        for i in range(len(contours_L2)):  # calculate points for each contour
-            # creating convex hull object for each contour
-            hull_L2.append(cv2.convexHull(contours_L2[i], False))
-        # create an empty black image
-        drawing_L2 = np.zeros((dilatedmask_lane2.shape[0], dilatedmask_lane2.shape[1], 3), np.uint8)
-    #    area = []
-    #    areahull = []
+        s.print_contours(SHOW_PARAMETERS,frame_lane2, contours_L2)
+
+        drawing_L2 = f.create_empty_image(dilatedmask_lane2)
+
         #draw contours and hull points
         for i in range(len(contours_L2)):
             if cv2.contourArea(contours_L2[i]) > r(MIN_AREA_FOR_DETEC):
@@ -311,16 +299,11 @@ while True:
                     continue
                 
                 
-                if SHOW_CAR_RECTANGLE:
+                if center_L2[1] > r(UPPER_LIMIT_TRACK):
                     PADDING = r(600)
-                    if center_L2[1] > r(UPPER_LIMIT_TRACK):
-                        cv2.rectangle(frame_lane2, (x_L2, y_L2), (x_L2+w_L2, y_L2+h_L2), t.GREEN, 2)
-                        cv2.rectangle(frame, (x_L2+PADDING, y_L2), (x_L2+w_L2+PADDING, y_L2+h_L2), t.GREEN, 2)
-                        area_L2.append(w_L2*h_L2)
-                    else:
-                        cv2.rectangle(frame, (x_L2, y_L2), (x_L2+w_L2, y_L2+h_L2), t.PINK, 2)
-                        cv2.rectangle(frame, (x_L2+PADDING, y_L2), (x_L2+w_L2+PADDING, y_L2+h_L2), t.PINK, 2)
-
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame, (x_L2+PADDING, y_L2), (w_L2, h_L2))
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame_lane2, (x_L2, y_L2), (w_L2, h_L2))
+                    
                 # ################## TRACKING #################################
                 # Look for existing blobs that match this one
                 closest_blob_L2 = None
@@ -392,18 +375,15 @@ while True:
                 # #############################################################
 
         fgmask_L3 = bgsMOG.apply(frame_lane3, None, 0.01)
-        erodedmask_L3 = cv2.erode(fgmask_L3, KERNEL_ERODE_L3, iterations=1)
-        dilatedmask_L3 = cv2.dilate(erodedmask_L3, KERNEL_DILATE_L3, iterations=1)
-        contours_L3, hierarchy = cv2.findContours(dilatedmask_L3, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        erodedmask_L3 = f.apply_erode(fgmask_L3, KERNEL_ERODE)
+        dilatedmask_L3 = f.apply_dilate(erodedmask_L3, KERNEL_DILATE)
+        contours_L3, hierarchy = f.find_contours(dilatedmask_L3)
+        hull_L3 = f.apply_convexHull(contours_L3)
 
-        #contornos =  cv2.drawContours(frame, contours, -1, BLUE, 2, 8, hierarchy)
-        hull_L3 = []
-        for i in range(len(contours_L3)):  # calculate points for each contour
-            # creating convex hull object for each contour
-            hull_L3.append(cv2.convexHull(contours_L3[i], False))
-        # create an empty black image
-        drawing_L3 = np.zeros((dilatedmask_L3.shape[0], dilatedmask_L3.shape[1], 3), np.uint8)
-    #    areahull = []
+        s.print_contours(SHOW_PARAMETERS,frame_lane3, contours_L3)
+
+        drawing_L3 = f.create_empty_image(dilatedmask_L3)
+        
         #draw contours_L3 and hull points
         for i in range(len(contours_L3)):
             if cv2.contourArea(contours_L3[i]) > r(MIN_AREA_FOR_DETEC):
@@ -427,15 +407,10 @@ while True:
                     continue
                 
                 
-                if SHOW_CAR_RECTANGLE:
+                if center_L3[1] > r(UPPER_LIMIT_TRACK):
                     PADDING = r(1270)
-                    if center_L3[1] > r(UPPER_LIMIT_TRACK):
-                        cv2.rectangle(frame_lane3, (x_L3, y_L3), (x_L3+w_L3, y_L3+h_L3), t.GREEN, 2)
-                        cv2.rectangle(frame, (x_L3+PADDING, y_L3), (x_L3+w_L3+PADDING, y_L3+h_L3), t.GREEN, 2)
-                        area_L3.append(w_L3*h_L3)
-                    else:
-                        cv2.rectangle(frame_lane3, (x_L3, y_L3), (x_L3+w_L3, y_L3+h_L3), t.PINK, 2)
-                        cv2.rectangle(frame, (x_L3+PADDING, y_L3), (x_L3+w_L3+PADDING, y_L3+h_L3), t.PINK, 2)
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame, (x_L3+PADDING, y_L3), (w_L3, h_L3))
+                    s.print_vehicle_rectangle(SHOW_PARAMETERS, frame_lane3, (x_L3, y_L3), (w_L3, h_L3))
 
                 # ################## TRACKING #################################
                 # Look for existing blobs that match this one
@@ -727,13 +702,13 @@ if SAVE_RESULTS:
                    list_3km_tot, list_5km_tot, list_maior5km_tot)
 
 
-#for i in range(len(abs_error_list)):
-#    if x[i] > 50 and x[i] < 54:
-#        x2.append(x[i])
-#        y2.append(y[i])
-        
-#    abs_error.append(round(x[i]-y[i], 4))
-#    erro_3km.append((3,-3))
+    #for i in range(len(abs_error_list)):
+    #    if x[i] > 50 and x[i] < 54:
+    #        x2.append(x[i])
+    #        y2.append(y[i])
+            
+    #    abs_error.append(round(x[i]-y[i], 4))
+    #    erro_3km.append((3,-3))
     copy2('testes_homografica.py', f'results/{DATE}/')
     copy2('tccfunctions.py', f'results/{DATE}/')
 

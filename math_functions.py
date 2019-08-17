@@ -21,6 +21,13 @@ def calculate_speed(trails, fps, ratio, correction_factor):
     speed = (dist_meter*3.6*correction_factor)/(qntd_frames*(1/fps))
     return speed
 
+# TRACKING
+
+def sort_tracked_blob(tracked_blobs, center):
+    '''Sort the blobs we have seen in previous 
+    frames by pixel distance from this one'''
+    closest_blobs = sorted(tracked_blobs, key=lambda b: cv2.norm(b['trail'][0], center))
+    return closest_blobs
 
 if __name__ == '__main__':
     print('arquivo math_functions executado. \n Esse arquivo possui apenas funcoes')
