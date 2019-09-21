@@ -11,6 +11,7 @@ import datetime
 from shutil import copy2
 import math_functions as m
 import xml_functions as x
+from util import *
 
 from sys import exit
 #######  CONSTANT VALUES ###################################################
@@ -251,9 +252,6 @@ while True:
                     tracked_blobs.append(b)  # Agora tracked_blobs não será False
                 # ################# END TRACKING ##############################
                 # ################# END FAIXA 3  ##############################
-                # #############################################################
-                # #############################################################
-                # #############################################################
 
 
         fgmask_lane2 = bgsMOG.apply(frame_lane2, None, 0.01)
@@ -262,6 +260,7 @@ while True:
         contours_L2, hierarchy = f.find_contours(dilatedmask_lane2)
         hull_L2 = f.apply_convexHull(contours_L2)
 
+        
         s.print_contours(SHOW_PARAMETERS,frame_lane2, contours_L2)
 
         drawing_L2 = f.create_empty_image(dilatedmask_lane2)
