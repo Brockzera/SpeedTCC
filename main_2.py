@@ -82,9 +82,9 @@ bgs_MOG = cv2.createBackgroundSubtractorMOG2(
     history=10, varThreshold=50, detectShadows=0)
 
 # Variant Values
-dict_lane1 = {}  # Armazena os valores de "speed, frame_start, frame_end" da FAIXA 1
-dict_lane2 = {}  # Armazena os valores de "speed, frame_start, frame_end" da FAIXA 2
-dict_lane3 = {}  # Armazena os valores de "speed, frame_start, frame_end" da FAIXA 3
+dict_lane1 = {}  # Armazena os valores de "speed, frame_start, frame_end" da
+dict_lane2 = {}  # Armazena os valores de "speed, frame_start, frame_end" da
+dict_lane3 = {}  # Armazena os valores de "speed, frame_start, frame_end" da
 tracked_blobs = []  # Lista que salva os dicionários dos tracked_blobs
 tracked_blobs_lane2 = []  # Lista que salva os dicionários dos tracked_blobs
 tracked_blobs_lane3 = []
@@ -94,7 +94,7 @@ prev_speed = 1.0
 
 frameCount = 0  # Armazena a contagem de frames processados do video
 out = 0  # Armazena o frame com os contornos desenhados
-#final_ave_speed = 0
+# final_ave_speed = 0
 ave_speed = 0
 
 results_lane1 = {}
@@ -248,16 +248,16 @@ while True:
 
                                 try:
                                     results_lane3[str(closest_blob['id'])] = dict(ave_speed=round(ave_speed, 2),
-                                                                                     speeds=closest_blob['speed'],
-                                                                                     frame=frameCount,
-                                                                                     real_speed=float(
-                                                                                         dict_lane3['speed']),
-                                                                                     abs_error=round(
-                                                                                         abs_error, 2),
-                                                                                     per_error=round(
-                                                                                         per_error, 3),
-                                                                                     trail=closest_blob['trail'],
-                                                                                     car_id=closest_blob['id'])
+                                                                                  speeds=closest_blob['speed'],
+                                                                                  frame=frameCount,
+                                                                                  real_speed=float(
+                                        dict_lane3['speed']),
+                                        abs_error=round(
+                                        abs_error, 2),
+                                        per_error=round(
+                                        per_error, 3),
+                                        trail=closest_blob['trail'],
+                                        car_id=closest_blob['id'])
                                     abs_error = []
                                     per_error = []
 
@@ -288,22 +288,22 @@ while True:
                         tracked_blobs_lane3[i]['id']))
                     del tracked_blobs_lane3[i]
 
-        for blob3 in tracked_blobs_lane3:  # Desenha os pontos centrais
+        for blob in tracked_blobs_lane3:  # Desenha os pontos centrais
             if SHOW_PARAMETERS['SHOW_TRAIL']:
-                s.print_trail(blob3['trail'], lane3.frame)
+                s.print_trail(blob['trail'], lane3.frame)
 
-            if blob3['speed'] and blob3['speed'][0] != 0:
-                prev_len_speed.insert(0, len(blob3['speed']))
+            if blob['speed'] and blob['speed'][0] != 0:
+                prev_len_speed.insert(0, len(blob['speed']))
                 # limpa prev_len_speed se estiver muito grande
                 # deixa no máx 20 valores
                 if len(prev_len_speed) > 20:
                     while len(prev_len_speed) > 20:
                         del prev_len_speed[19]
                 # remove zero elements on the speed list
-                blob3['speed'] = [item for item in blob3['speed'] if item != 0.0]
-                print('========= speed list =========', blob3['speed'])
+                blob['speed'] = [item for item in blob['speed'] if item != 0.0]
+                print('========= speed list =========', blob['speed'])
                 prev_speed = ave_speed
-                ave_speed = np.mean(blob3['speed'])
+                ave_speed = np.mean(blob['speed'])
                 print('========= prev_speed =========',
                       float("{0:.5f}".format(prev_speed)))
                 print('========= ave_speed ==========',
@@ -311,7 +311,7 @@ while True:
 
                 # ############### FIM PRINTA OS BLOBS  ########################
 
-        print('*************************************************')
+        # print('*************************************************')
 
         if SHOW_FRAME_COUNT:
             PERCE = str(int((100*frameCount)/vehicle['videoframes']))
@@ -331,14 +331,13 @@ while True:
         frameCount += 1    # Conta a quantidade de Frames
 
         end_frame_time = time.time()
-    #    process_times.append(process_end - process_start)
         process_times.append(end_frame_time - start_frame_time)
 
-        if frameCount == CLOSE_VIDEO:  # fecha o video
+        if frameCount == CLOSE_VIDEO:
             break
-        if cv2.waitKey(1) & 0xFF == ord('q'):  # Tecla Q para fechar
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # Press Q to close
             break
-    else:  # sai do while: ret == False
+    else:
         break
 
 

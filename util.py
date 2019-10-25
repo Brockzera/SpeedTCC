@@ -5,14 +5,12 @@ import format_frame as f
 
 
 class FormattedFrame():
-
     def __init__(self, frame, kernel_erode, kernel_dilate, resize_ratio):
         self.frame = frame
         self.kernel_erode = kernel_erode
         self.kernel_dilate = kernel_dilate
         self.contours = []
         self.hull = []
-        # self.foreground_mask = bgs_MOG.apply(self.frame, None, 0.01)
         self.eroded_mask = 0
         self.dilated_mask = 0
 
@@ -52,20 +50,6 @@ class FormattedFrame():
         for i in range(len(contours)):
             self.hull.append(cv2.convexHull(self.contours[i], False))
         return self.hull
-    #     return self.frame
-
-        # self.resize_ratio = resize_ratio
-        # self.bottom_limit_track = 910
-        # self.upper_limit_track = 395
-        # self.correction_factor = 2.10
-        # self.kernel_erode = np.ones((self.r(12), self.r(12)), np.uint8)
-        # self.kernel_dilate = np.ones((self.r(120), self.r(400)), np.uint8)
-        # self.lane_info = {}
-        # self.tracked_blobs = []
-        # self.results = {}
-
-    def r(self, num):
-        return int(num*self.resize_ratio)
 
 
 if __name__ == '__main__':
